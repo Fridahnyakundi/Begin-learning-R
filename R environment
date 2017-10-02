@@ -80,8 +80,6 @@ d <- read.csv(choose.files())
 # ... if your data is in .Rdata format...
 load(paste(dd, "day1data.Rdata", sep = "/"))
 
-
-
 # you can also create new data structures of varying classes directly in R
 # scalars are like a single cell in Excel. For example, if you were creating
 # a column of biomass in g from a column of biomass in kg, you would probably
