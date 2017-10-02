@@ -1,0 +1,188 @@
+rm(list=ls())
+# Date: 24th June 2017
+# innov_r training day 1 annotated script
+# written by: Fridah Nyakundi
+# written for: Uganda Statistical Course
+# last edited: 
+
+# to run this script in RStudio, copy the lines of code you want to run and 
+# press CTRL-ENTER. you can run the entire script at once or go line by line.
+
+# set directories
+# NOTE: change the "OTHER FOLDERS" part to the unique file path you've saved
+# the r_training folder to. For example, if r_training is saved in
+# Users//2. Professional Development/Analysis, then change
+# "OTHER FOLDERS" to "2. Professional Development/Analysis"
+setwd <- "F:/OneDrive - CGIAR/Work Tools/uganda workshop/SCRIPTS/Class 1"
+getwd()
+wd <- "F:/OneDrive - CGIAR/Work Tools/uganda workshop/SCRIPTS/Class 1"
+#wd <- "~/Documents/OAF/Global Projects/iHub Data Jam"
+dd <- paste(wd, "data", sep = "/")
+od <- paste(wd, "output", sep = "/")
+
+# NOTE: I opt not to permanently change my working directories, 
+# but instead define characters that are then used with the paste() function 
+# to define directories. While there is no standard "best practice" for 
+# directory structure, ICT uses a three folder structure:
+# -- wd is the working directory (one per project) where scripts & .Rdata live
+# -- dd is the data folder within the working directory (only for raw data)
+# -- od is the output folder within the working directory (PDFs, tables, etc.)
+
+R.Version() #Check's R version
+# libraries
+library(ggplot2)
+library(reshape2)
+install.packages('codetools')
+library(codetools)
+install.packages('dplyr') 
+R.Version()
+
+# NOTE: calling libraries with the library() function only works if you have
+# already installed the package using install.packages("packagename").
+# Installation of packages is a one-time step. From then on, all you have to do
+# to invoke package functions is call the library. If you have not yet 
+# installed a package but try to invoke it, library() will throw an error.
+
+# get familiar with the help function
+?sum # pulls up the help documentation for the sum function
+sum(1:10) #sums a vector of 1 to 5 i.e 1, 2, 3, 4,5
+sum(1,2,3,4,5)
+sum(1:5, NA, na.rm = FALSE)#we can remove rm, missing variables. Note I got all this from 
+#help function
+help(sum) # same thing -- use whichever call you prefer
+??sum # provides a list of all help files involving the string "sum"
+??anova
+# NOTE: R's help documentation is a good starting point, but sometimes hard
+# to understand / digest. When in doubt, you can also Google a function 
+# and look for more examples, or ask
+
+# load data
+# ... if your data is in .csv format...
+trainingdata <- read.csv(choose.files())
+
+trainingdata <- read.csv('F:/OneDrive - CGIAR/Work Tools/uganda workshop/SCRIPTS/Class 1/Mugugabiomassdata.csv')
+
+mugugdata <- read.csv(paste(wd, "Mugugabiomassdata.csv", sep = "/"), 
+                      header = TRUE, stringsAsFactors = TRUE) 
+mugugdata
+View(mugugdata)
+#double equal sign means is equal to
+
+d <- read.csv(choose.files())
+# the paste function is just like concatenate in Excel. Therefore, 
+# paste(dd, "rsdata.csv", sep = "/") tells R to paste the string in dd
+# (defined in line 15 of the script) with the string "rs.data.csv" separated
+# by a backslash. Essentially, it gives a file path to the data.
+
+# how to save data in to r data format
+# save(d, file=paste(.....))
+
+# ... if your data is in .Rdata format...
+load(paste(dd, "day1data.Rdata", sep = "/"))
+
+
+
+# you can also create new data structures of varying classes directly in R
+# scalars are like a single cell in Excel. For example, if you were creating
+# a column of biomass in g from a column of biomass in kg, you would probably
+# create a cell in Excel with the biomass averages from diff fields.
+# an example of a scalar.
+s1 <- "char"
+s2 <- 0
+
+# vectors are single columns of data; the data must all be the same type
+v1 <- 1:10 # make an integer vector of the numbers 1 through 10
+v2 <- letters[1:10] # make a character vector of the first ten letters
+V1V2 <- cbind(v1,v2)
+v3 <- runif(5, 0, 1) # make a numeric vector of 5 random numbers between 0 & 1
+v4 <- c(TRUE, FALSE, TRUE, F, T, T, T, F) # make a logical vector
+v5 <- seq(from = as.Date("04-Nov-18", format = "%d-%b-%y"), 
+    by = 7, length.out = 3) # make date vector of the next two weeks from today
+
+# matrices are 2D data structures (aka tables) of a single type
+m1 <- matrix(1:20, ncol = 4)
+m2 <- matrix(1:20, nrow = 4)
+
+# dataframes are also 2D data structures; however, each column can be a
+# different data type. for example, to make a dataframe with one column 
+# named 'col1' of the numbers 1 through 5, and
+# one column named 'col2' of the letters a through e
+df <- data.frame(col1 = 1:5, col2 = c("a", "b", "c", "d", "e"))
+
+# lists are like binders or Excel workbooks with multiple worksheets -- 
+# they are very flexible groupings of data structures that can be endlessly 
+# recursive (you can have lists within lists within lists!)
+# generally, lists are more advanced structures to work with, but very helpful 
+# if you have different levels of data (e.g. farmer and group) that you want to
+# run analyses on. if you find you need to use a list, give us a call!
+l1 <- list(s1, v4, list(m1, m2), list(df, v5))
+l2 <- list(s2, seq(from = 1, by = 0.1, length.out = 11))
+
+# NULL is an empty data structure -- you usually only really need to define these
+# if you are about to do a for loop
+n <- NULL
+
+# there are other data types out there that you'll undoubtedly discover... 
+# but scalar, vector, matrix, dataframe, list, and NULL will get you a long way
+ View(mugugdata)
+
+# poke around your dataset
+ls(mugugdata) # list the data structures in your environment inthis case muguga
+ls() # list names of the data structure.avoid with big datasets
+str(mugugdata) # show the structure (size, names, types, preview) of "mugugadata"??
+
+dim(mugugdata) # show the dimensions of "d"??; NOTE: only works for 2D structures
+#dim(surprise) # whoopsies! R didn't like that...
+#length(surprise) # length works for vectors and lists
+
+names(mugugdata) # function to get or set names of data structures in âdâ
+
+head(mugugdata) # print the first few rows of a data structure
+tail(mugugdata) # print the last few rows of a data structure
+d  # print the entire data structure
+cultivar <- mugugdata$Fresh.biomass..kg.
+View(cultivar)
+
+table(mugugdata$Cultivar, useNA = "ifany") # create a count cross-tab. this shows
+# the number of rows for each unique trial name
+
+# that's all well and good, but what if you want to look at specific parts
+# of your dataset? that's when indexing / subscripting comes in
+mugugdata$Cultivar # print a column in the dataset.
+mugugdata[, "Cultivar"] # another way to do the same thing
+
+mugugdata[, 3] # and yet another way to do the same thing
+
+unique(mugugdata$Cultivar) # print only the unique cultivar names
+
+mugugdata[10:22, "Cultivar"] # print rows 10 - 33; hmmm, seems there's a typo...
+mugugdata[c(12:17, 20:27), "Cultivar"] # print rows... and ....
+mugugdata[10:22, 3]
+
+# rename variables
+names(mugugdata) # what is that craziness in the first name?!
+names(mugugdata)[2] <- "Rep" # much better 
+names(mugugdata)[2] <- "Replication"
+
+kawanda <- (1:18)
+
+# while exploring our data, we saw some oddities in there, like NAs and typos.
+# so let's do some cleaning!
+# things to watch out for: typos, data classes, duplicates, funky names, 
+# NA/Inf/-Inf/NaN, and values that don't make physical sense such as negative
+# land areas
+
+
+# ... and repeat for the 'finalplantcount' variable
+table(mugugdata$Cultivar) # what is that string doing in there?!
+which(mugugdata$Cultivar == "Kakqmega 1") # gotcha!
+mugugdata[20, 3] <- "Kakamega 1"
+str(mugugdata$Cultivar) # wait a minute... why is this still a character vector?
+mugugdata$Cultivar <- as.numeric(mugugdata$Cultivar) # phew, now we're good
+
+# okay, so now we know how to navigate in and around our data. 
+# let's do something with it now!
+# ... create separate vector from existing column
+Culti.vars <- mugugdata$Cultivar
+
+#XXXXXX end of UG sCRIPT Day 1
