@@ -1,2 +1,2 @@
-# Uganda-R-scripts
-Scripts from the R training in Uganda
+# Data Exploration-Using-R
+Scripts from various data analysis and trainings
